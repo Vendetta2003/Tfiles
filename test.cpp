@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
-void main()
+int main()
 {
-    cout << "this is a test run " <<endl;
-
+    cout << "this is a test run " << endl ; 
+    return 0;
 }
