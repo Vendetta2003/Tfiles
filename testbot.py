@@ -166,4 +166,4 @@ async def purge_error(ctx, error):
 
 
 
-bot.run('ODgxOTIwNTE4NjEyMjEzODQx.YSz2fA.-eQV4S2u9SN-fo-Qv_jI2sG1icI')
+bot.run('SOME_BOT_TOKEN')
