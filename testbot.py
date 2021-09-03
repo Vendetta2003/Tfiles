@@ -2,11 +2,11 @@ import asyncio
 import discord
 from discord import member
 from discord.ext import  commands 
-from discord.ext.commands.errors import CommandNotFound, MissingRequiredArgument
+from discord.ext.commands.errors import CommandNotFound, MissingPermissions, MissingRequiredArgument, MissingRole
 
-#need to add Verification , command roles and announcements for today , excessive chat spammer bot.
-#next day have to add exceptions on role missing
-#command.has_role is also a thing which can be used for future
+#need to add Verification , command roles  , excessive chat spammer bot.
+#err for MissingArgument isnt working for ann
+#need to add  `* *` for better text editing later
 bot = commands.Bot(command_prefix='>>' , help_command = None)
 
 @bot.event
@@ -15,10 +15,10 @@ async def on_ready():
     print("We are ready to go!")
 
 @bot.event
-async def on_member_join(member):
-    print(f'{member} has joined the server')#usage of F strings
-    role = discord.utils.get(member.server.roles , name = "Beta role rofl")
-    await bot.add_roles(member , role)
+async def on_member_join(members):
+    print(f'{members} has joined the server')#usage of F strings
+    role = discord.utils.get(members.server.roles , name = "Beta role rofl")
+    await bot.add_roles(members , role)
 @bot.event 
 async def on_member_leave(member):
     print(f"{member} has left the server")
@@ -111,6 +111,24 @@ async def tempmute(ctx,usr:discord.Member,time:int,*, reason=None):
 
 
 
+@bot.command(name  = "ann" , pass_context = True)#needs annoucement and announcer role to work
+@commands.has_role("Announcer")
+async def ann(ctx , name:str , * , msg:str):
+    embed  = discord.Embed(title = "Announcement"  , color = 0x006400 )
+    embed.add_field(name = f"***{name}***" , value = f"***{msg}***")
+    embed.set_footer(text = "UwU")
+    embed.set_thumbnail(url = "https://keepthetech.com/wp-content/uploads/2021/02/anime-girl.jpg")
+    await ctx.send(embed = embed)
+    #print(ctx.message)
+    #print(ctx.author.name)
+    msg = await ctx.fetch_message(ctx.message.id)
+    await msg.delete()
+    ann_role = discord.utils.get(ctx.guild.roles, name= "Announcements") 
+    await ctx.send(ann_role.mention)
+    #print(ctx.author.id)
+
+
+
 @bot.command(pass_context=True)
 async def help(ctx):
     embed = discord.Embed(title = "Help", description = "Shows a list of commands along with their arguments." , 
@@ -125,6 +143,7 @@ async def help(ctx):
     embed.add_field(name="tempmute" , value = "Mutes a user for a specified time , >>tempmute <user> <time in mins> <reason>" , inline = False)
     embed.add_field(name="accountAQW" , value = "Account Manager AQW , >>accountAQW " , inline = False)
     embed.add_field(name="membership" , value = "Membership page for aqw , >>membership" , inline = False)
+    embed.add_field(name="ann" , value = "Announcement , >>ann <title in 1 word> <description>" , inline = False)
     embed.set_thumbnail(url=
     "https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/cd3b1023-a009-4c0e-a47b-033bcea6c840/dah479y-eb9c07ee-4ef7-4c41-8386-6274211f40d3.png/v1/fill/w_1182,h_676,strp/gravelyn_nude_2_by_dartguy86_dah479y-pre.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7ImhlaWdodCI6Ijw9MTE3MiIsInBhdGgiOiJcL2ZcL2NkM2IxMDIzLWEwMDktNGMwZS1hNDdiLTAzM2JjZWE2Yzg0MFwvZGFoNDc5eS1lYjljMDdlZS00ZWY3LTRjNDEtODM4Ni02Mjc0MjExZjQwZDMucG5nIiwid2lkdGgiOiI8PTIwNDkifV1dLCJhdWQiOlsidXJuOnNlcnZpY2U6aW1hZ2Uub3BlcmF0aW9ucyJdfQ.IOa-_MVJwBOFzCjsyuMHxwqblSjjvt6NPgimhSkHTl0")
 
@@ -134,7 +153,7 @@ async def help(ctx):
 
 @bot.command(name = "testDM")#this is a beta function still in test
 async def dm(ctx):
-    usr = ctx.message.author
+    usr = ctx.message.author #ctx.author will work too rofl
     message = "this is just a test message"                                             
     await usr.send(message)
 
@@ -145,12 +164,12 @@ async def purge_error(ctx, error):
         await ctx.send("Missing arguments (No. of messages to delete) , >>help to check list of commands and their syntax.")
 
 @char.error
-async def purge_error(ctx, error):
+async def char_error(ctx, error):
     if isinstance(error , MissingRequiredArgument):# need to make more number of errors
         await ctx.send("Specify the name of the User you want to CharPage, >>help to check list of commands and their syntax.")
 
 @kick.error
-async def purge_error(ctx, error):
+async def kick_error(ctx, error):
     if isinstance(error , MissingRequiredArgument):# need to make more number of errors
         await ctx.send("Missing arguments (Specify/Tag the user u want to kick ,>>help to check list of commands and their syntax.)")
 
@@ -160,10 +179,37 @@ async def purge_error(ctx, error):
         await ctx.send("Specify the name of the User you want to Ban, >>help to check list of commands and their syntax.")
 
 @tempmute.error
-async def purge_error(ctx, error):
+async def purge_error(ctx, error):#function overloading
     if isinstance(error , MissingRequiredArgument):# need to make more number of errors
         await ctx.send("Missing arguments (User and/or time , >>help to check list of commands and their syntax.)")
 
+@ann.error
+async def annsome_error(ctx, error):
+    if isinstance(error , MissingRequiredArgument):# need to make more number of errors
+        await ctx.send("Missing required arguments (>>help to check list of commands and their syntax.)")
+
+@tempmute.error
+async def tempmute_error(ctx, error):
+    if isinstance(error , MissingRole):# need to make more number of errors
+        await ctx.send("Missing role 'Chat moderator' (>>help to check list of commands and their syntax.)")
+
+@ann.error
+async def ann_error(ctx, error):
+    if isinstance(error , MissingRole):# need to make more number of errors
+        await ctx.send("Missing role 'Announcer' (>>help to check list of commands and their syntax.)")
+
+@ban.error
+async def ban_error(ctx, error):
+    if isinstance(error , MissingPermissions):# need to make more number of errors
+        await ctx.send("Missing permissions 'Ban' (>>help to check list of commands and their syntax.)")
+
+@kick.error
+async def kick_error(ctx, error):
+    if isinstance(error , MissingPermissions):# need to make more number of errors
+        await ctx.send("Missing permissions 'Kick' (>>help to check list of commands and their syntax.)")
 
 
-bot.run('SOME_BOT_TOKEN')
+
+
+
+bot.run(SOME_KEY)
