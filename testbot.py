@@ -4,10 +4,11 @@ from discord import member
 from discord.ext import  commands 
 from discord.ext.commands.errors import CommandNotFound, MissingPermissions, MissingRequiredArgument, MissingRole
 
-#need to add Verification , command roles  , excessive chat spammer bot.
+#command roles  , excessive chat spammer bot.
 #err for MissingArgument isnt working for ann
 #need to add  `* *` for better text editing later
-bot = commands.Bot(command_prefix='>>' , help_command = None)
+#need to sort out errors
+bot = commands.Bot(command_prefix='>>' , help_command = None , intents = discord.Intents.all())
 
 @bot.event
 async def on_ready():
@@ -15,10 +16,13 @@ async def on_ready():
     print("We are ready to go!")
 
 @bot.event
-async def on_member_join(members):
-    print(f'{members} has joined the server')#usage of F strings
-    role = discord.utils.get(members.server.roles , name = "Beta role rofl")
-    await bot.add_roles(members , role)
+async def on_member_join(member):# had to set intent rofl and have to set channel id
+    await member.send("`Welcome to our server `")
+    #print("member has joined = "+str(member.id))
+    channel = bot.get_channel(883455641891512370)#gets only text channels
+    await channel.send(member.mention + " Welcome to the amazing test server UwU , type >>verify to get verified.")
+
+
 @bot.event 
 async def on_member_leave(member):
     print(f"{member} has left the server")
@@ -128,6 +132,15 @@ async def ann(ctx , name:str , * , msg:str):
     #print(ctx.author.id)
 
 
+@bot.command(name = "verify")#once u type this in u will get access to server
+async def verify(ctx):
+     user  = ctx.message.author
+     role = discord.utils.get(ctx.guild.roles , name = "Guest")
+     await user.add_roles(role)
+     await ctx.send(f"{user.mention} is now verified. Enjoy your stay! ")
+
+
+
 
 @bot.command(pass_context=True)
 async def help(ctx):
@@ -174,42 +187,48 @@ async def kick_error(ctx, error):
         await ctx.send("Missing arguments (Specify/Tag the user u want to kick ,>>help to check list of commands and their syntax.)")
 
 @ban.error
-async def purge_error(ctx, error):
+async def ban_error(ctx, error):
     if isinstance(error , MissingRequiredArgument):# need to make more number of errors
         await ctx.send("Specify the name of the User you want to Ban, >>help to check list of commands and their syntax.")
 
 @tempmute.error
-async def purge_error(ctx, error):#function overloading
+async def tempmute_error(ctx, error):#function overloading
     if isinstance(error , MissingRequiredArgument):# need to make more number of errors
         await ctx.send("Missing arguments (User and/or time , >>help to check list of commands and their syntax.)")
 
 @ann.error
-async def annsome_error(ctx, error):
+async def ann_error(ctx, error):
     if isinstance(error , MissingRequiredArgument):# need to make more number of errors
         await ctx.send("Missing required arguments (>>help to check list of commands and their syntax.)")
 
 @tempmute.error
-async def tempmute_error(ctx, error):
+async def tempmute2_error(ctx, error):
     if isinstance(error , MissingRole):# need to make more number of errors
         await ctx.send("Missing role 'Chat moderator' (>>help to check list of commands and their syntax.)")
 
 @ann.error
-async def ann_error(ctx, error):
+async def ann2_error(ctx, error):
     if isinstance(error , MissingRole):# need to make more number of errors
         await ctx.send("Missing role 'Announcer' (>>help to check list of commands and their syntax.)")
 
 @ban.error
-async def ban_error(ctx, error):
+async def ban2_error(ctx, error):
     if isinstance(error , MissingPermissions):# need to make more number of errors
         await ctx.send("Missing permissions 'Ban' (>>help to check list of commands and their syntax.)")
 
 @kick.error
-async def kick_error(ctx, error):
+async def kick2_error(ctx, error):
     if isinstance(error , MissingPermissions):# need to make more number of errors
         await ctx.send("Missing permissions 'Kick' (>>help to check list of commands and their syntax.)")
 
+@purge.error
+async def purge2_error(ctx, error):
+    if isinstance(error , MissingPermissions):# need to make more number of errors
+        await ctx.send("Missing Role (Chat moderator) , >>help to check list of commands and their syntax.")
 
 
 
 
-bot.run(SOME_KEY)
+
+
+bot.run(SOME_TOKEN)
