@@ -117,4 +117,4 @@ async def on_add_usr_error(ctx, error):#name wont make a diff cuz its taken as f
         await ctx.send("Required role is missing , use >>help")
 
 
-bot.run("ODgxOTIwNTE4NjEyMjEzODQx.YSz2fA.8uVydB6L3qNCGV15LvAJ_0XTgw8")
+bot.run("token")
