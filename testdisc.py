@@ -3,7 +3,7 @@ from discord.ext.commands.errors import CommandInvokeError, MissingRequiredArgum
 import pymongo
 from discord.ext import commands
 from decoder1 import decode_username
-
+#this was the base version of the discord bot i made
 bot = commands.Bot(command_prefix = ">>" , intentions = discord.Intents.all())
 client = pymongo.MongoClient("mongodb+srv://testusr:testusr@cluster0.xrzw0.mongodb.net/testDB?retryWrites=true&w=majority")
 db = client.testDB
