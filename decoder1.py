@@ -11,3 +11,4 @@ def decode_username(data:str):#{'_id': '881621205013110805', 'username': 'pokemo
     return decoded_data
 
 #print(decode_username("{'_id': '881621205013110805', 'username': 'pokemon123'}"))
+# used this in dicord bot for guild, so that it can have a database of members. This method is the parser.
