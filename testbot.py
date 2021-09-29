@@ -4,6 +4,7 @@ from discord import member
 from discord.ext import  commands 
 from discord.ext.commands.errors import CommandNotFound, MissingPermissions, MissingRequiredArgument, MissingRole
 
+#discord bot fo guild
 #command roles  , excessive chat spammer bot.
 #err for MissingArgument isnt working for ann
 #need to add  `* *` for better text editing later
