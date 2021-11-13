@@ -1,7 +1,7 @@
 import threading
 import os 
 import sys
-# usage  - python netscanner.py <Number of hosts to scan in the current network>
+# usage  - python netscanner0.py <Number of hosts to scan in the current network>
 # it uses 192.168.0.1-255 as its ip range. 
 
 def main():
