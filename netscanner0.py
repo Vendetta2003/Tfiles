@@ -8,9 +8,9 @@ def main():
     def ping(ip):
         resp = str(os.popen(f"ping -n 1 {ip}").read())
         if ("Destination host unreachable" not in resp):
-            print(f"[+]Host is up - {ip}")
+            print(f"[+] Host is up - {ip}")
         else:
-            print(f"[-]Host is down - {ip}")
+            print(f"[-] Host is down - {ip}")
         
     threads  = []
     a = int(sys.argv[1])
