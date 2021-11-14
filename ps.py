@@ -32,5 +32,5 @@ def main():
     t2 = time.time()
     print()
     print(f"Scanned {end} ports in {t2-t1} seconds.")
-
-main()
+if(__name__=="__main__"):
+    main()
